@@ -25,94 +25,95 @@ using namespace Slyvina::Units;
 using namespace Slyvina::TQSG;
 
 namespace Slyvina {
-namespace June19 {
+	namespace June19 {
 
-	static string _error;	
+		static string _error;
 
-	static void TabDraw(j19gadget* g) {
-		// TODO: Actual code
-		int rx{ 0 }, ry{ 0 }, rw{ g->W() }, rh{ g->H() };
-		auto f{ g->Font() };
-		auto fs{ g->FontHeight() };		
-		g->EventSelectItem = false;
-		if (!f) { _error = "No Font"; return; }
-		for (int i = 0; i < g->NumItems(); i++) {
-			if (g->SelectedItem() < 0) g->SelectItem((i)); // In tabbers there MUST always be a selected item, if there's none, we'll make one!
-			auto item{ g->__ITEM(i) };
-			if (!item->Kid()) item->CreateKid();
-			int w{ 4 + f->Width(item->Caption.c_str()) };
-			int h{ 4 + fs }; 
-			int x{ rx }; rx += w; 
-			if (x && rx > g->W()) { rx = 0; ry += fs + 4; }
-			int y{ ry }; rh = g->H() - (y+h);
-			if (TQSE::MouseHit(1) && TQSE::MouseX() > x + g->DrawX() && TQSE::MouseX() + x + w + g->DrawX() && TQSE::MouseY() > y + g->DrawY() && TQSE::MouseY() < y + h + g->DrawY()) {
-				g->EventSelectItem = true;
-				g->SelectItem(i);
-				if (g->CBAction) g->CBAction(g, j19action::Select);
+		static void TabDraw(j19gadget* g) {
+			// TODO: Actual code
+			int rx{ 0 }, ry{ 0 }, rw{ g->W() }, rh{ g->H() };
+			auto f{ g->Font() };
+			auto fs{ g->FontHeight() };
+			g->EventSelectItem = false;
+			if (!f) { _error = "No Font"; return; }
+			for (int i = 0; i < g->NumItems(); i++) {
+				if (g->SelectedItem() < 0) g->SelectItem((i)); // In tabbers there MUST always be a selected item, if there's none, we'll make one!
+				auto item{ g->__ITEM(i) };
+				if (!item->Kid()) item->CreateKid();
+				int w{ 4 + f->Width(item->Caption.c_str()) };
+				int h{ 4 + fs };
+				int x{ rx }; rx += w;
+				if (x && rx > g->W()) { rx = 0; ry += fs + 4; }
+				int y{ ry }; rh = g->H() - (y + h);
+				if (TQSE::MouseHit(1) && TQSE::MouseX() > x + g->DrawX() && TQSE::MouseX() + x + w + g->DrawX() && TQSE::MouseY() > y + g->DrawY() && TQSE::MouseY() < y + h + g->DrawY()) {
+					g->EventSelectItem = true;
+					g->SelectItem(i);
+					if (g->CBAction) g->CBAction(g, j19action::Select);
+				}
+				SetColor(g->BR, g->BG, g->BB, g->BA);
+				Rect(x + g->DrawX(), y + g->DrawY(), w, h);
+				SetColor(g->FR, g->FG, g->FB, g->FA);
+				Rect(x + g->DrawX(), y + g->DrawY(), w, h, i != g->SelectedItem());
+				if (i == g->SelectedItem()) SetColor(g->BR, g->BG, g->BB, 255); // Ignore Alpha on that one
+				f->Text(item->Caption, x + (w / 2) + g->DrawX(), y + (h / 2) + g->DrawY(), (Align)2, (Align)2);
+
 			}
-			SetColor(g->BR, g->BG, g->BB, g->BA);
-			Rect(x+g->DrawX(), y+g->DrawY(), w, h);
-			SetColor(g->FR, g->FG, g->FB, g->FA);
-			Rect(x+g->DrawX(), y+g->DrawY(), w, h, i != g->SelectedItem());
-			if (i == g->SelectedItem()) SetColor(g->BR, g->BG, g->BB, 255); // Ignore Alpha on that one
-			f->Text(item->Caption, x + (w / 2)+g->DrawX(), y + (h / 2)+g->DrawY(), 2, 2);
-			
+			// The currently Active Panel
+			for (int i = 0; i < g->NumItems(); i++) {
+				auto Tab{ GetTab(g,i) }; if (!Tab) { _error = "Something went wrong when retrieving the active tab for drawing"; return; }
+				Tab->X(2);
+				Tab->Y(ry + fs + 2);
+				Tab->W(g->W() - 4);
+				Tab->H(rh - 4);
+				SetColor(g->FR, g->FG, g->FB, g->FA);
+				if (i == g->SelectedItem()) Rect(Tab->DrawX(), Tab->DrawY(), Tab->W(), Tab->H(), true);
+				Tab->Visible = i == g->SelectedItem();
+				//Tab->Draw();
+			}
 		}
-		// The currently Active Panel
-		for (int i = 0; i < g->NumItems(); i++) {
-			auto Tab{ GetTab(g,i) }; if (!Tab) { _error = "Something went wrong when retrieving the active tab for drawing"; return; }
-			Tab->X(2);
-			Tab->Y(ry + fs + 2);
-			Tab->W(g->W() - 4);
-			Tab->H(rh - 4);
-			SetColor(g->FR, g->FG, g->FB, g->FA);
-			if (i == g->SelectedItem()) Rect(Tab->DrawX(), Tab->DrawY(), Tab->W(), Tab->H(), true);
-			Tab->Visible = i == g->SelectedItem();
-			//Tab->Draw();
+
+		j19gadget* CreateTabber(int x, int y, int w, int h, j19gadget* group) {
+			static auto init{ j19gadget::RegDraw(j19kind::Tabber, TabDraw) };
+			auto ret{ new j19gadget() };
+			_error = "";
+			ret->SetKind(j19kind::Tabber);
+			ret->X(x);
+			ret->Y(y);
+			ret->W(w);
+			ret->H(h);
+			ret->SetParent(group);
+			ret->IntFlag = 0;
+			return ret;
 		}
-	}
 
-	j19gadget* CreateTabber(int x, int y, int w, int h, j19gadget* group) {
-		static auto init{ j19gadget::RegDraw(j19kind::Tabber, TabDraw) };
-		auto ret{ new j19gadget() };
-		_error = "";
-		ret->SetKind(j19kind::Tabber);
-		ret->X(x);
-		ret->Y(y);
-		ret->W(w);
-		ret->H(h);
-		ret->SetParent(group);
-		ret->IntFlag = 0;
-		return ret;
-	}
+		j19gadget* GetTab(j19gadget* g, size_t idx) {
+			if (g->GetKind() != j19kind::Tabber) { _error = "Can only get tabs from tabbers"; return nullptr; }
+			if (idx >= g->NumItems()) { _error = "Tab index out of range (" + to_string(idx) + "/" + to_string(g->NumItems()) + ")"; return nullptr; }
+			auto Tab{ g->__ITEM(idx) };
+			if (!Tab->Kid()) Tab->CreateKid();
+			return Tab->Kid();
+		}
 
-	j19gadget* GetTab(j19gadget*g, size_t idx) {
-		if (g->GetKind() != j19kind::Tabber) { _error = "Can only get tabs from tabbers"; return nullptr; }
-		if (idx >= g->NumItems()) { _error = "Tab index out of range ("+to_string(idx)+"/"+to_string(g->NumItems())+")"; return nullptr; }
-		auto Tab{ g->__ITEM(idx) };
-		if (!Tab->Kid()) Tab->CreateKid();
-		return Tab->Kid();
-	}
+		j19gadget* GetTab(j19gadget* g) {
+			if (g->SelectedItem() < 0) { _error = "No tab yet selected! This is required before you do this!"; return nullptr; }
+			return GetTab(g, g->SelectedItem());
+		}
 
-	j19gadget* GetTab(j19gadget*g) {
-		if (g->SelectedItem() < 0) { _error = "No tab yet selected! This is required before you do this!"; return nullptr; }
-		return GetTab(g,g->SelectedItem());
-	}
+		j19gadget* AddTab(j19gadget* parent, std::string Caption) {
+			if (parent->GetKind() != j19kind::Tabber) { _error = "Can only add tabs to tabbers"; return nullptr; }
+			parent->AddItem(Caption);
+			auto Tab{ GetTab(parent,parent->NumItems() - 1) };
+			if (!Tab) { _error = "BIG ERROR! Tab creation failed! (" + Caption + ")\n" + _error; cout << "\7" << _error << endl; return nullptr; }
+			Tab->X(0);
+			Tab->Y(0);
+			Tab->W(parent->W());
+			Tab->H(parent->H());
 
-	j19gadget* AddTab(j19gadget* parent, std::string Caption) {
-		if (parent->GetKind() != j19kind::Tabber) { _error = "Can only add tabs to tabbers"; return nullptr; }
-		parent->AddItem(Caption);
-		auto Tab{ GetTab(parent,parent->NumItems() - 1) };
-		if (!Tab) { _error = "BIG ERROR! Tab creation failed! ("+Caption+")\n"+_error; cout << "\7" << _error << endl; return nullptr; }
-		Tab->X(0);
-		Tab->Y(0);
-		Tab->W(parent->W());
-		Tab->H(parent->H());
+			return Tab;
+		}
 
-		return Tab;
-	}
-
-	std::string GetTabError() {
-		return _error;
+		std::string GetTabError() {
+			return _error;
+		}
 	}
 }

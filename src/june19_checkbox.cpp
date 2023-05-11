@@ -24,49 +24,51 @@ using namespace Slyvina::Units;
 using namespace Slyvina::TQSG;
 using namespace Slyvina::TQSE;
 
-namespace june19 {
-	static string _error{ "" };
+namespace Slyvina {
+	namespace June19 {
+		static string _error{ "" };
 
-	static void DrawCheckBox(j19gadget* g) {
-		auto Enab{ g->RecEnabled() };
-		auto Deler{ 1 }; if (!Enab) Deler = 2;
-		j19chat("Drawing Checkbox: " << g->Caption << "(" << g->DrawX() << "," << g->DrawY() << ")");
-		_error = "";
-		auto F{ g->Font() };
-		if (!F) { _error = "No font for checkbox"; j19chat("Font issue");  return; }
-		if (g->BA) {
-			SetColor(g->BR, g->BG, g->BB, g->BA);
-			Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
+		static void DrawCheckBox(j19gadget* g) {
+			auto Enab{ g->RecEnabled() };
+			auto Deler{ 1 }; if (!Enab) Deler = 2;
+			j19chat("Drawing Checkbox: " << g->Caption << "(" << g->DrawX() << "," << g->DrawY() << ")");
+			_error = "";
+			auto F{ g->Font() };
+			if (!F) { _error = "No font for checkbox"; j19chat("Font issue");  return; }
+			if (g->BA) {
+				SetColor(g->BR, g->BG, g->BB, g->BA);
+				Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
+			}
+			SetColor(g->FR / Deler, g->FG / Deler, g->FB / Deler, g->FA);
+			auto sqs{ g->FontHeight() };
+			Rect(g->DrawX(), g->DrawY(), sqs, sqs, !g->checked);
+			if (Enab && MouseHit(1) && MouseX() >= g->DrawX() && MouseY() >= g->DrawY() && MouseX() <= g->DrawX() + sqs && MouseY() <= g->DrawY() + sqs) {
+				g->checked = !g->checked;
+				auto a{ j19action::Check };
+				if (!g->checked) a = j19action::UnCheck;
+				if (g->CBAction) g->CBAction(g, a);
+			}
+			F->Text(g->Caption, g->DrawX() + (sqs * 1.5), g->DrawY());
 		}
-		SetColor(g->FR / Deler, g->FG / Deler, g->FB / Deler, g->FA);
-		auto sqs{ g->FontHeight() };
-		Rect(g->DrawX(), g->DrawY(), sqs, sqs, !g->checked);
-		if (Enab && MouseHit(1) && MouseX() >= g->DrawX() && MouseY() >= g->DrawY() && MouseX() <= g->DrawX() + sqs && MouseY() <= g->DrawY() + sqs) {
-			g->checked = !g->checked;
-			auto a{ j19action::Check };
-			if (!g->checked) a = j19action::UnCheck;
-			if (g->CBAction) g->CBAction(g, a);
-		}
-		F->Draw(g->Caption, g->DrawX() + (sqs * 1.5), g->DrawY());
-	}
 
 
-    j19gadget* CreateCheckBox(std::string Caption, int x, int y, int w, int h, j19gadget* parent, bool checkedbydefault) {
-		static auto init{ false };
-		auto ret{ new j19gadget() };
-		if (!init) {
-			j19gadget::RegDraw(j19kind::CheckBox, DrawCheckBox);
+		j19gadget* CreateCheckBox(std::string Caption, int x, int y, int w, int h, j19gadget* parent, bool checkedbydefault) {
+			static auto init{ false };
+			auto ret{ new j19gadget() };
+			if (!init) {
+				j19gadget::RegDraw(j19kind::CheckBox, DrawCheckBox);
+			}
+			_error = "";
+			ret->SetKind(j19kind::CheckBox);
+			ret->Caption = Caption;
+			ret->X(x);
+			ret->Y(y);
+			ret->W(w);
+			ret->H(h);
+			ret->SetParent(parent);
+			ret->IntFlag = 0;
+			ret->checked = checkedbydefault;
+			return ret;
 		}
-		_error = "";
-		ret->SetKind(j19kind::CheckBox);
-		ret->Caption = Caption;
-		ret->X(x);
-		ret->Y(y);
-		ret->W(w);
-		ret->H(h);
-		ret->SetParent(parent);
-		ret->IntFlag = 0;
-		ret->checked = checkedbydefault;
-		return ret;
 	}
 }

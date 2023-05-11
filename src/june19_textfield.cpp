@@ -67,7 +67,8 @@ namespace Slyvina {
 					}
 				}
 			}
-			g->Font()->Text(g->Text + cur, g->DrawX() + 2, g->DrawY() + (g->H() / 2), 0, 2);
+			//cout << "Debug Textbox: \"" << g->Text << "\" (" << g->DrawX() + 2 << "," << g->DrawY() + (g->H() / 2) << ")\n"; // DEBUG ONLY!!!
+			g->Font()->Text(g->Text + cur, g->DrawX() + 2, g->DrawY() + (g->H() / 2), Align::Left,Align::Center);
 			//cout << "AutoResize: " << g->AutoResize << " H:" << g->H() << " FontSize+4" << (g->FontHeight() + 4) << "\n";
 			if (g->AutoResize) {
 				if (g->H() < g->FontHeight() + 4) g->H(g->H() + 1);

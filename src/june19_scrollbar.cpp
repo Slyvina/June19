@@ -20,63 +20,64 @@
 #include <june19_scrollbar.hpp>
 
 namespace Slyvina {
-namespace June19 {
+	namespace June19 {
 
-	using namespace Units;
-	using namespace TQSG;
-	using namespace TQSE;
+		using namespace Units;
+		using namespace TQSG;
+		using namespace TQSE;
 
-	static void SEr(std::string msg) {
-		std::cout << "June 19 - Scrollbar Error: " << msg << "\x7\n";
-	}
-
-
-	static void ActionScrollV(j19gadget* source, j19action action) {
-
-	}
-
-	static void DrawScrollV(j19gadget* g) {
-		auto prnt{ g->GetParent() };
-		auto
-			X{ prnt->DrawX() + prnt->W() },
-			Y{ prnt->DrawY() };
-		SetColor(prnt->FR, prnt->FG, prnt->FB, 255);
-		Rect(X , prnt->DrawY(), 16, prnt->H());
-		SetColor(prnt->BR, prnt->BG, prnt->BB, 255);
-		for (int i = 1; i < 7; i++) {
-			Rect(X + 8 - i, Y + 2+i, i * 2, 1);
-			Rect(X + 8 - i, (Y + prnt->H()) - (2 + i), i * 2, 1);
+		static void SEr(std::string msg) {
+			std::cout << "June 19 - Scrollbar Error: " << msg << "\x7\n";
 		}
-		if (MouseHit(1) && MouseX() > X && MouseX() < X + 16) {
-			if (MouseY() > Y && MouseY() < Y + 16) prnt->SetScrollY(prnt, prnt->ScrollY - 1);
-			else if (MouseY() > Y + prnt->H() - 16 && MouseY() < Y + prnt->H()) prnt->SetScrollY(prnt, prnt->ScrollY + 1);
-		}
-	}
 
-	j19gadget* AttachScrollV(j19gadget* parent) {
-		if (!parent) { SEr("Null parent"); return nullptr; }
-		switch (parent->GetKind()) {
-		case j19kind::ListBox:
-			break;
-		default:
-			SEr("Parent not allowed");
-			return nullptr;
+
+		static void ActionScrollV(j19gadget* source, j19action action) {
+
 		}
-		if (parent->W() < 50) {
-			SEr("Parent width too low");
-			return nullptr;
+
+		static void DrawScrollV(j19gadget* g) {
+			auto prnt{ g->GetParent() };
+			auto
+				X{ prnt->DrawX() + prnt->W() },
+				Y{ prnt->DrawY() };
+			SetColor(prnt->FR, prnt->FG, prnt->FB, 255);
+			Rect(X, prnt->DrawY(), 16, prnt->H());
+			SetColor(prnt->BR, prnt->BG, prnt->BB, 255);
+			for (int i = 1; i < 7; i++) {
+				Rect(X + 8 - i, Y + 2 + i, i * 2, 1);
+				Rect(X + 8 - i, (Y + prnt->H()) - (2 + i), i * 2, 1);
+			}
+			if (MouseHit(1) && MouseX() > X && MouseX() < X + 16) {
+				if (MouseY() > Y && MouseY() < Y + 16) prnt->SetScrollY(prnt, prnt->ScrollY - 1);
+				else if (MouseY() > Y + prnt->H() - 16 && MouseY() < Y + prnt->H()) prnt->SetScrollY(prnt, prnt->ScrollY + 1);
+			}
 		}
-		static auto init{ false };
-		auto ret{ new j19gadget() };
-		if (!init) {
-			j19gadget::RegDraw(j19kind::VertScrollBar, DrawScrollV);
+
+		j19gadget* AttachScrollV(j19gadget* parent) {
+			if (!parent) { SEr("Null parent"); return nullptr; }
+			switch (parent->GetKind()) {
+			case j19kind::ListBox:
+				break;
+			default:
+				SEr("Parent not allowed");
+				return nullptr;
+			}
+			if (parent->W() < 50) {
+				SEr("Parent width too low");
+				return nullptr;
+			}
+			static auto init{ false };
+			auto ret{ new j19gadget() };
+			if (!init) {
+				j19gadget::RegDraw(j19kind::VertScrollBar, DrawScrollV);
+			}
+			parent->W(parent->W() - 16);
+			ret->SetParent(parent);
+			ret->W(32);
+			ret->H(parent->H()); // set for good measure, as these are actually not needed.
+			ret->SetKind(j19kind::VertScrollBar);
+			//ret->CBAction(ActionScrollV); // Doesn't work? Fuck that!
+			return ret;
 		}
-		parent->W(parent->W() - 16);
-		ret->SetParent(parent);
-		ret->W(32);
-		ret->H(parent->H()); // set for good measure, as these are actually not needed.
-		ret->SetKind(j19kind::VertScrollBar);
-		//ret->CBAction(ActionScrollV); // Doesn't work? Fuck that!
-		return ret;
 	}
 }
