@@ -19,10 +19,12 @@
 // EndLic
 #pragma once
 
-#include "june19_core.hpp"
+#include "../head/june19_core.hpp"
 
-namespace june19 {
-	j19gadget* CreateButton(std::string Caption, int x, int y, j19gadget* Parent);
-	j19gadget* CreateButton(std::string Caption, int x, int y, int w, int h, j19gadget* Parent);
-	
+namespace Slyvina {
+	namespace June19 {
+		j19gadget* CreateButton(std::string Caption, int x, int y, j19gadget* Parent);
+		j19gadget* CreateButton(std::string Caption, int x, int y, int w, int h, j19gadget* Parent);
+
+	}
 }

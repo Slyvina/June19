@@ -17,10 +17,12 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
-#include "june19_checkbox.hpp"
+#include "../head/june19_checkbox.hpp"
 
 using namespace std;
-using namespace TrickyUnits;
+using namespace Slyvina::Units;
+using namespace Slyvina::TQSG;
+using namespace Slyvina::TQSE;
 
 namespace june19 {
 	static string _error{ "" };
@@ -33,13 +35,13 @@ namespace june19 {
 		auto F{ g->Font() };
 		if (!F) { _error = "No font for checkbox"; j19chat("Font issue");  return; }
 		if (g->BA) {
-			TQSG_ACol(g->BR, g->BG, g->BB, g->BA);
-			TQSG_Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
+			SetColor(g->BR, g->BG, g->BB, g->BA);
+			Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
 		}
-		TQSG_ACol(g->FR / Deler, g->FG / Deler, g->FB / Deler, g->FA);
+		SetColor(g->FR / Deler, g->FG / Deler, g->FB / Deler, g->FA);
 		auto sqs{ g->FontHeight() };
-		TQSG_Rect(g->DrawX(), g->DrawY(), sqs, sqs, !g->checked);
-		if (Enab && TQSE_MouseHit(1) && TQSE_MouseX() >= g->DrawX() && TQSE_MouseY() >= g->DrawY() && TQSE_MouseX() <= g->DrawX() + sqs && TQSE_MouseY() <= g->DrawY() + sqs) {
+		Rect(g->DrawX(), g->DrawY(), sqs, sqs, !g->checked);
+		if (Enab && MouseHit(1) && MouseX() >= g->DrawX() && MouseY() >= g->DrawY() && MouseX() <= g->DrawX() + sqs && MouseY() <= g->DrawY() + sqs) {
 			g->checked = !g->checked;
 			auto a{ j19action::Check };
 			if (!g->checked) a = j19action::UnCheck;
