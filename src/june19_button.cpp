@@ -33,11 +33,11 @@ namespace Slyvina {
 			j19byte Deler{ 1 };
 			auto Enabled{ g->RecEnabled() };
 			auto showcapt{ true };
-			auto hover{ TQSE_MouseX() > g->DrawX() && TQSE_MouseY() > g->DrawY() && TQSE_MouseX() < g->DrawX() + g->W() && TQSE_MouseY() < g->DrawY() + g->H() };
+			auto hover{ TQSE::MouseX() > g->DrawX() && TQSE::MouseY() > g->DrawY() && TQSE::MouseX() < g->DrawX() + g->W() && TQSE::MouseY() < g->DrawY() + g->H() };
 			if (!Enabled) Deler = 2;
 			if (g->AutoResize) {
-				auto tw{ g->Font()->TextWidth(g->Caption.c_str()) };
-				auto th{ g->Font()->TextHeight(g->Caption.c_str()) };
+				auto tw{ g->Font()->Width(g->Caption.c_str()) };
+				auto th{ g->Font()->Height(g->Caption.c_str()) };
 				auto bw{ tw + 12 };
 				auto bh{ th + 8 };
 				if (g->W() < bw) { g->W(g->W() + 1); showcapt = false; } else if (g->W() > bw) { g->W(g->W() - 1); showcapt = false; }
@@ -46,9 +46,9 @@ namespace Slyvina {
 			g->checked = false;
 			if (!Enabled) g->Down = false;
 			if (Enabled && hover) {
-				if (TQSE_MouseHit(1)) g->Down = true;
+				if (TQSE::MouseHit(1)) g->Down = true;
 			}
-			if (TQSE_MouseReleased(1)) {
+			if (TQSE::MouseReleased(1)) {
 				g->Down = false;
 				if (hover && Enabled) {
 					g->checked = true;
@@ -58,27 +58,27 @@ namespace Slyvina {
 			if (g->W() < 2 || g->H() < 2) return; // Too small to do anything!
 			auto lix{ g->DrawX() }, rex{ g->DrawX() + g->W() };
 			auto toy{ g->DrawY() }, boy{ g->DrawY() + g->H() };
-			TQSG_ACol(g->BR / Deler, g->BG / Deler, g->BB / Deler, g->BA);
-			TQSG_Rect(lix, toy, g->W(), g->H());
+			SetColor(g->BR / Deler, g->BG / Deler, g->BB / Deler, g->BA);
+			Rect(lix, toy, g->W(), g->H());
 			// Bottom + Right
-			if (g->Down) { TQSG_ACol(g->FR / Deler, g->FG / Deler, g->FB / Deler, 255); } else { TQSG_ACol((g->FR / 2) / Deler, (g->FG / 2) / Deler, (g->FB / 2) / Deler, 255); }
+			if (g->Down) { SetColor(g->FR / Deler, g->FG / Deler, g->FB / Deler, 255); } else { SetColor((g->FR / 2) / Deler, (g->FG / 2) / Deler, (g->FB / 2) / Deler, 255); }
 			// Bottom
-			TQSG_Line(lix + 1, boy, rex, boy);
-			TQSG_Line(lix + 2, boy - 1, rex, boy - 1);
+			Line(lix + 1, boy, rex, boy);
+			Line(lix + 2, boy - 1, rex, boy - 1);
 			// Right
-			TQSG_Line(rex, boy, rex, toy + 1);
-			TQSG_Line(rex - 1, boy, rex - 1, toy + 2);
+			Line(rex, boy, rex, toy + 1);
+			Line(rex - 1, boy, rex - 1, toy + 2);
 			// Top + Left 
-			if (!g->Down) { TQSG_ACol(g->FR / Deler, g->FG / Deler, g->FB / Deler, g->FA); } else { TQSG_ACol((g->FR / 2) / Deler, (g->FG / 2) / Deler, (g->FB / 2) / Deler, 255); }
+			if (!g->Down) { SetColor(g->FR / Deler, g->FG / Deler, g->FB / Deler, g->FA); } else { SetColor((g->FR / 2) / Deler, (g->FG / 2) / Deler, (g->FB / 2) / Deler, 255); }
 			// Top
-			TQSG_Line(lix, toy, rex - 1, toy);
-			TQSG_Line(lix, toy + 1, rex - 2, toy + 1);
+			Line(lix, toy, rex - 1, toy);
+			Line(lix, toy + 1, rex - 2, toy + 1);
 			// Left
-			TQSG_Line(lix, toy, lix, boy - 1);
-			TQSG_Line(lix + 1, toy, lix + 1, boy - 2);
+			Line(lix, toy, lix, boy - 1);
+			Line(lix + 1, toy, lix + 1, boy - 2);
 			if (showcapt) {
-				TQSG_ACol(g->FR / Deler, g->FG / Deler, g->FB / Deler, 255);
-				g->Font()->Draw(g->Caption, lix + (g->W() / 2), toy + (g->H() / 2), 2, 2);
+				SetColor(g->FR / Deler, g->FG / Deler, g->FB / Deler, 255);
+				g->Font()->Text(g->Caption, lix + (g->W() / 2), toy + (g->H() / 2), Align::Center, Align::Center);
 			}
 
 		}
