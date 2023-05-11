@@ -18,84 +18,88 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
 #include "june19_textfield.hpp"
-#include <QuickString.hpp>
+#include <SlyvString.hpp>
 
 using namespace std;
-using namespace TrickyUnits;
 
-namespace june19 {
+namespace Slyvina {
+	namespace June19 {
+		using namespace Units;
+		using namespace TQSE;
+		using namespace TQSG;
 
-	void DrawTextfield(j19gadget*g){
-		auto deler{ 1 }; if (!g->RecEnabled()) deler = 2;
-		auto co{ (SDL_GetTicks() / 500) % 2 };
-		string cur{ " " };
-		auto act{ g->Active() };
-		TQSG_ACol(g->BR / deler, g->BG / deler, g->BB / deler, g->BA);
-		TQSG_Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
-		TQSG_ACol(g->FR / deler, g->FG / deler, g->FB / deler, g->FA);
-		if (act) {
-			TQSG_Rect(g->DrawX(), g->DrawY(), g->W(), g->H(),true);
-			if (g->RecEnabled()) {
-				if (co) cur = "_";
-				auto k{ TQSE_GetChar() };
-				if (TQSE_KeyDown(SDLK_LCTRL) || TQSE_KeyDown(SDLK_RCTRL)) k = 0;
-				switch (k) {
-				case '\b':
-					if (g->Text.size()) {
-						g->Text = TrickyUnits::left(g->Text, g->Text.size() - 1);
-						j19callback(g, BackSpace);
-					}
-					break;
-				case '\t':
-					break; // Sorry, no tabs allowed. Could btw also serve for next textfield, but that's not worth the trouble, honest!
-				case '\r':
-					j19callback(g, Enter);
-				default:
-					//cout << "Keyhit for char: " << k << endl;
-					if (k >= 32 && k <= 126) {
-						auto txt{ g->Text };
-						txt += k;
-						//cout << "DEBUG TEXTFIELD TYPE: Received key: " << k << ";\t Text:\"" << txt << "_" << "\";\t TextWidth:" << g->Font()->TextWidth(string(txt + "_").c_str()) << ";\tGadgetWidth:" << (g->W() - 4) << endl;
-						if (g->Font()->TextWidth(string(txt + "_").c_str()) <= g->W() - 4) {
-							g->Text = txt;
-							j19callback(g, Type);
+		void DrawTextfield(j19gadget* g) {
+			auto deler{ 1 }; if (!g->RecEnabled()) deler = 2;
+			auto co{ (SDL_GetTicks() / 500) % 2 };
+			string cur{ " " };
+			auto act{ g->Active() };
+			SetColor(g->BR / deler, g->BG / deler, g->BB / deler, g->BA);
+			Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
+			SetColor(g->FR / deler, g->FG / deler, g->FB / deler, g->FA);
+			if (act) {
+				Rect(g->DrawX(), g->DrawY(), g->W(), g->H(), true);
+				if (g->RecEnabled()) {
+					if (co) cur = "_";
+					auto k{ GetChar() };
+					if (KeyDown(SDLK_LCTRL) || KeyDown(SDLK_RCTRL)) k = 0;
+					switch (k) {
+					case '\b':
+						if (g->Text.size()) {
+							g->Text = Left(g->Text, g->Text.size() - 1);
+							j19callback(g, BackSpace);
+						}
+						break;
+					case '\t':
+						break; // Sorry, no tabs allowed. Could btw also serve for next textfield, but that's not worth the trouble, honest!
+					case '\r':
+						j19callback(g, Enter);
+					default:
+						//cout << "Keyhit for char: " << k << endl;
+						if (k >= 32 && k <= 126) {
+							auto txt{ g->Text };
+							txt += k;
+							//cout << "DEBUG TEXTFIELD TYPE: Received key: " << k << ";\t Text:\"" << txt << "_" << "\";\t TextWidth:" << g->Font()->TextWidth(string(txt + "_").c_str()) << ";\tGadgetWidth:" << (g->W() - 4) << endl;
+							if (g->Font()->Width(string(txt + "_").c_str()) <= g->W() - 4) {
+								g->Text = txt;
+								j19callback(g, Type);
+							}
 						}
 					}
 				}
 			}
+			g->Font()->Text(g->Text + cur, g->DrawX() + 2, g->DrawY() + (g->H() / 2), 0, 2);
+			//cout << "AutoResize: " << g->AutoResize << " H:" << g->H() << " FontSize+4" << (g->FontHeight() + 4) << "\n";
+			if (g->AutoResize) {
+				if (g->H() < g->FontHeight() + 4) g->H(g->H() + 1);
+				else if (g->H() > g->FontHeight() + 4) g->H(g->H() - 1);
+			}
+			if (MouseHit(1) && MouseX() >= g->DrawX() && MouseY() >= g->DrawY() && MouseX() <= g->DrawX() + g->W() && MouseY() <= g->DrawY() + g->H()) { g->Activate(); }
 		}
-		g->Font()->Draw(g->Text + cur, g->DrawX() + 2, g->DrawY() + (g->H() / 2), 0, 2);
-		//cout << "AutoResize: " << g->AutoResize << " H:" << g->H() << " FontSize+4" << (g->FontHeight() + 4) << "\n";
-		if (g->AutoResize) {
-			if (g->H() < g->FontHeight()+4) g->H(g->H() + 1);
-			else if (g->H() > g->FontHeight()+4) g->H(g->H() - 1);			
+
+		static string _error{ "" };
+		j19gadget* CreateTextfield(int x, int y, int w, j19gadget* ouwe, std::string defaultvalue) {
+			return CreateTextfield(x, y, w, 0, ouwe, defaultvalue);
 		}
-		if (TQSE_MouseHit(1) && TQSE_MouseX() >= g->DrawX() && TQSE_MouseY() >= g->DrawY() && TQSE_MouseX() <= g->DrawX() + g->W() && TQSE_MouseY() <= g->DrawY() + g->H()) { g->Activate(); }
-	}
 
-	static string _error{ "" };
-	j19gadget* june19::CreateTextfield(int x, int y, int w, j19gadget* ouwe, std::string defaultvalue) {
-		return CreateTextfield(x, y, w, 0, ouwe, defaultvalue);
-	}
+		j19gadget* CreateTextfield(int x, int y, int w, int h, j19gadget* ouwe, std::string defaultvalue) {
+			static auto init{ false };
+			auto ret{ new j19gadget() };
+			if (!init) {
+				j19gadget::RegDraw(j19kind::Textfield, DrawTextfield);
+			}
+			_error = "";
+			ret->SetKind(j19kind::Textfield);
+			ret->Caption = "";
+			ret->Text = defaultvalue;
+			ret->X(x);
+			ret->Y(y);
+			ret->W(w);
+			ret->H(h);
+			ret->SetParent(ouwe);
+			ret->BA = 110;
+			ret->AutoResize = h <= 0;
+			return ret;
 
-	j19gadget* CreateTextfield(int x, int y, int w, int h, j19gadget* ouwe, std::string defaultvalue) {
-		static auto init{ false };
-		auto ret{ new j19gadget() };
-		if (!init) {
-			j19gadget::RegDraw(j19kind::Textfield, DrawTextfield);
 		}
-		_error = "";
-		ret->SetKind(j19kind::Textfield);
-		ret->Caption = "";
-		ret->Text = defaultvalue;
-		ret->X(x);
-		ret->Y(y);
-		ret->W(w);
-		ret->H(h);
-		ret->SetParent(ouwe);
-		ret->BA = 110;
-		ret->AutoResize = h<=0;
-		return ret;
-
 	}
 }

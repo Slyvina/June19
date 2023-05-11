@@ -22,20 +22,22 @@
 
 #include "june19_core.hpp"
 
-namespace june19 {
+namespace Slyvina {
+	namespace June19 {
 
-	j19gadget* CreateTabber(int x, int y, int w, int h, j19gadget* group);
-	
-	// Get the data of the tab of your choice;
-	j19gadget* GetTab(j19gadget* g,size_t idx);
+		j19gadget* CreateTabber(int x, int y, int w, int h, j19gadget* group);
 
-	// Get the data of the currently active tab
-	j19gadget* GetTab(j19gadget* g);
+		// Get the data of the tab of your choice;
+		j19gadget* GetTab(j19gadget* g, size_t idx);
 
-	// Create a tab and get the panel attached to it. (Please note initially the tab will have the same sizes as its host tabber, however this can automatically be adapted in order to keep fitting when more tabs are added (or tabs are being removed)
-	j19gadget* AddTab(j19gadget* parent, std::string Caption);
+		// Get the data of the currently active tab
+		j19gadget* GetTab(j19gadget* g);
 
-	// Get the latest error message concerning tabs
-	std::string GetTabError();
+		// Create a tab and get the panel attached to it. (Please note initially the tab will have the same sizes as its host tabber, however this can automatically be adapted in order to keep fitting when more tabs are added (or tabs are being removed)
+		j19gadget* AddTab(j19gadget* parent, std::string Caption);
 
+		// Get the latest error message concerning tabs
+		std::string GetTabError();
+
+	}
 }

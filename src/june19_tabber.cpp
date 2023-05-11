@@ -21,10 +21,11 @@
 #include "june19_tabber.hpp"
 
 using namespace std;
-using namespace TrickyUnits;
+using namespace Slyvina::Units;
+using namespace Slyvina::TQSG;
 
-namespace june19 {
-
+namespace Slyvina {
+namespace June19 {
 
 	static string _error;	
 
@@ -39,22 +40,22 @@ namespace june19 {
 			if (g->SelectedItem() < 0) g->SelectItem((i)); // In tabbers there MUST always be a selected item, if there's none, we'll make one!
 			auto item{ g->__ITEM(i) };
 			if (!item->Kid()) item->CreateKid();
-			int w{ 4 + f->TextWidth(item->Caption.c_str()) };
+			int w{ 4 + f->Width(item->Caption.c_str()) };
 			int h{ 4 + fs }; 
 			int x{ rx }; rx += w; 
 			if (x && rx > g->W()) { rx = 0; ry += fs + 4; }
 			int y{ ry }; rh = g->H() - (y+h);
-			if (TQSE_MouseHit(1) && TQSE_MouseX() > x + g->DrawX() && TQSE_MouseX() + x + w + g->DrawX() && TQSE_MouseY() > y + g->DrawY() && TQSE_MouseY() < y + h + g->DrawY()) {
+			if (TQSE::MouseHit(1) && TQSE::MouseX() > x + g->DrawX() && TQSE::MouseX() + x + w + g->DrawX() && TQSE::MouseY() > y + g->DrawY() && TQSE::MouseY() < y + h + g->DrawY()) {
 				g->EventSelectItem = true;
 				g->SelectItem(i);
 				if (g->CBAction) g->CBAction(g, j19action::Select);
 			}
-			TQSG_ACol(g->BR, g->BG, g->BB, g->BA);
-			TQSG_Rect(x+g->DrawX(), y+g->DrawY(), w, h);
-			TQSG_ACol(g->FR, g->FG, g->FB, g->FA);
-			TQSG_Rect(x+g->DrawX(), y+g->DrawY(), w, h, i != g->SelectedItem());
-			if (i == g->SelectedItem()) TQSG_ACol(g->BR, g->BG, g->BB, 255); // Ignore Alpha on that one
-			f->Draw(item->Caption, x + (w / 2)+g->DrawX(), y + (h / 2)+g->DrawY(), 2, 2);
+			SetColor(g->BR, g->BG, g->BB, g->BA);
+			Rect(x+g->DrawX(), y+g->DrawY(), w, h);
+			SetColor(g->FR, g->FG, g->FB, g->FA);
+			Rect(x+g->DrawX(), y+g->DrawY(), w, h, i != g->SelectedItem());
+			if (i == g->SelectedItem()) SetColor(g->BR, g->BG, g->BB, 255); // Ignore Alpha on that one
+			f->Text(item->Caption, x + (w / 2)+g->DrawX(), y + (h / 2)+g->DrawY(), 2, 2);
 			
 		}
 		// The currently Active Panel
@@ -64,8 +65,8 @@ namespace june19 {
 			Tab->Y(ry + fs + 2);
 			Tab->W(g->W() - 4);
 			Tab->H(rh - 4);
-			TQSG_ACol(g->FR, g->FG, g->FB, g->FA);
-			if (i == g->SelectedItem()) TQSG_Rect(Tab->DrawX(), Tab->DrawY(), Tab->W(), Tab->H(), true);
+			SetColor(g->FR, g->FG, g->FB, g->FA);
+			if (i == g->SelectedItem()) Rect(Tab->DrawX(), Tab->DrawY(), Tab->W(), Tab->H(), true);
 			Tab->Visible = i == g->SelectedItem();
 			//Tab->Draw();
 		}
