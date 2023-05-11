@@ -20,60 +20,64 @@
 #include "june19_radio.hpp"
 
 using namespace std;
-using namespace TrickyUnits;
+using namespace Slyvina::Units;
+using namespace Slyvina::TQSG;
+using namespace Slyvina::TQSE;
 
-namespace june19 {
+namespace Slyvina {
+	namespace June19 {
 
-	static string _error{ "" };
-	static void DrawRadio(j19gadget* g) {
-		auto Enab{ g->RecEnabled() };
-		auto Deler{ 1 }; if (!Enab) Deler = 2;
-		j19chat("Drawing label: " << g->Caption << "(" << g->DrawX() << "," << g->DrawY() << ")");
-		_error = "";
-		auto F{ g->Font() };
-		if (!F) { _error = "No font for label"; j19chat("Font issue");  return; }
-		if (g->BA) {
-			TQSG_ACol(g->BR, g->BG, g->BB, g->BA);
-			TQSG_Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
-		}
-		TQSG_ACol(g->FR/Deler, g->FG/Deler, g->FB/Deler, g->FA);
-		int radius{ min(g->FontHeight() / 2 ,12) };
-		TQSG_Circle(g->DrawX() + radius, g->DrawY() + radius, radius);
-		if (Enab && TQSE_MouseHit(1)) {
-			auto hz{ abs((g->DrawX() + radius) - TQSE_MouseX()) };
-			auto vt{ abs((g->DrawY() + radius) - TQSE_MouseY()) };
-			auto dist{ sqrt((hz * hz) + (vt * vt)) }; // Pythagoras all the way, folks!
-			// cout<< "Radio Pythagoras: " << dist << " <= " << radius << "\t"<< g->Caption<<"\n";
-			if (dist <= radius) {
-				for (size_t i = 0; g->GetParent()->Kid(i); i++) {
-					g->GetParent()->Kid(i)->checked = false; // g->GetParent()->Kid(i) == g;
-
-				}
-				g->checked = true; // Safety, but should be unneeded (should be and to be are 2 different things)
-				if (g->CBAction) g->CBAction(g, j19action::Check);
+		static string _error{ "" };
+		static void DrawRadio(j19gadget* g) {
+			auto Enab{ g->RecEnabled() };
+			auto Deler{ 1 }; if (!Enab) Deler = 2;
+			j19chat("Drawing label: " << g->Caption << "(" << g->DrawX() << "," << g->DrawY() << ")");
+			_error = "";
+			auto F{ g->Font() };
+			if (!F) { _error = "No font for label"; j19chat("Font issue");  return; }
+			if (g->BA) {
+				SetColor(g->BR, g->BG, g->BB, g->BA);
+				Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
 			}
-		}
-		if (g->checked) for(int i=radius;i;--i)TQSG_Circle(g->DrawX() + radius, g->DrawY() + radius, i);
-		F->Draw(g->Caption, g->DrawX()+(radius*3), g->DrawY());
-	}
+			SetColor(g->FR / Deler, g->FG / Deler, g->FB / Deler, g->FA);
+			int radius{ min(g->FontHeight() / 2 ,12) };
+			Circle(g->DrawX() + radius, g->DrawY() + radius, radius);
+			if (Enab && MouseHit(1)) {
+				auto hz{ abs((g->DrawX() + radius) - MouseX()) };
+				auto vt{ abs((g->DrawY() + radius) - MouseY()) };
+				auto dist{ sqrt((hz * hz) + (vt * vt)) }; // Pythagoras all the way, folks!
+				// cout<< "Radio Pythagoras: " << dist << " <= " << radius << "\t"<< g->Caption<<"\n";
+				if (dist <= radius) {
+					for (size_t i = 0; g->GetParent()->Kid(i); i++) {
+						g->GetParent()->Kid(i)->checked = false; // g->GetParent()->Kid(i) == g;
 
-	j19gadget* CreateRadioButton(std::string caption, int x, int y, int w, int h, j19gadget* mommy, bool defaultvalue) {
-		static auto init{ false };
-		auto ret{ new j19gadget() };
-		if (!init) {
-			j19gadget::RegDraw(j19kind::RadioButton, DrawRadio);
+					}
+					g->checked = true; // Safety, but should be unneeded (should be and to be are 2 different things)
+					if (g->CBAction) g->CBAction(g, j19action::Check);
+				}
+			}
+			if (g->checked) for (int i = radius; i; --i) Circle(g->DrawX() + radius, g->DrawY() + radius, i);
+			F->Text(g->Caption, g->DrawX() + (radius * 3), g->DrawY());
 		}
-		_error = "";
-		ret->SetKind(j19kind::RadioButton);
-		ret->Caption = caption;
-		ret->X(x);
-		ret->Y(y);
-		ret->W(w);
-		ret->H(h);
-		ret->SetParent(mommy);
-		ret->IntFlag = 0;
-		ret->checked = defaultvalue;
-		return ret;
-		//return nullptr;
+
+		j19gadget* CreateRadioButton(std::string caption, int x, int y, int w, int h, j19gadget* mommy, bool defaultvalue) {
+			static auto init{ false };
+			auto ret{ new j19gadget() };
+			if (!init) {
+				j19gadget::RegDraw(j19kind::RadioButton, DrawRadio);
+			}
+			_error = "";
+			ret->SetKind(j19kind::RadioButton);
+			ret->Caption = caption;
+			ret->X(x);
+			ret->Y(y);
+			ret->W(w);
+			ret->H(h);
+			ret->SetParent(mommy);
+			ret->IntFlag = 0;
+			ret->checked = defaultvalue;
+			return ret;
+			//return nullptr;
+		}
 	}
 }
