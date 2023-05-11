@@ -17,16 +17,19 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+
 #pragma once
 #include "june19_core.hpp"
 
-namespace june19 {
+namespace Slyvina {
+	namespace June19 {
 
-	/// <summary>
-	/// Best is NOT to call this function directly!
-	/// Gadgets requiring this will call this feature automatically.
-	/// </summary>
-	/// <param name="parent"></param>
-	/// <returns></returns>
-	j19gadget* AttachScrollV(j19gadget* parent);
+		/// <summary>
+		/// Best is NOT to call this function directly!
+		/// Gadgets requiring this will call this feature automatically.
+		/// </summary>
+		/// <param name="parent"></param>
+		/// <returns></returns>
+		j19gadget* AttachScrollV(j19gadget* parent);
+	}
 }

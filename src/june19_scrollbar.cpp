@@ -19,9 +19,12 @@
 // EndLic
 #include <june19_scrollbar.hpp>
 
-namespace june19 {
+namespace Slyvina {
+namespace June19 {
 
-	using namespace TrickyUnits;
+	using namespace Units;
+	using namespace TQSG;
+	using namespace TQSE;
 
 	static void SEr(std::string msg) {
 		std::cout << "June 19 - Scrollbar Error: " << msg << "\x7\n";
@@ -37,16 +40,16 @@ namespace june19 {
 		auto
 			X{ prnt->DrawX() + prnt->W() },
 			Y{ prnt->DrawY() };
-		TQSG_ACol(prnt->FR, prnt->FG, prnt->FB, 255);
-		TQSG_Rect(X , prnt->DrawY(), 16, prnt->H());
-		TQSG_ACol(prnt->BR, prnt->BG, prnt->BB, 255);
+		SetColor(prnt->FR, prnt->FG, prnt->FB, 255);
+		Rect(X , prnt->DrawY(), 16, prnt->H());
+		SetColor(prnt->BR, prnt->BG, prnt->BB, 255);
 		for (int i = 1; i < 7; i++) {
-			TQSG_Rect(X + 8 - i, Y + 2+i, i * 2, 1);
-			TQSG_Rect(X + 8 - i, (Y + prnt->H()) - (2 + i), i * 2, 1);
+			Rect(X + 8 - i, Y + 2+i, i * 2, 1);
+			Rect(X + 8 - i, (Y + prnt->H()) - (2 + i), i * 2, 1);
 		}
-		if (TQSE_MouseHit(1) && TQSE_MouseX() > X && TQSE_MouseX() < X + 16) {
-			if (TQSE_MouseY() > Y && TQSE_MouseY() < Y + 16) prnt->SetScrollY(prnt, prnt->ScrollY - 1);
-			else if (TQSE_MouseY() > Y + prnt->H() - 16 && TQSE_MouseY() < Y + prnt->H()) prnt->SetScrollY(prnt, prnt->ScrollY + 1);
+		if (MouseHit(1) && MouseX() > X && MouseX() < X + 16) {
+			if (MouseY() > Y && MouseY() < Y + 16) prnt->SetScrollY(prnt, prnt->ScrollY - 1);
+			else if (MouseY() > Y + prnt->H() - 16 && MouseY() < Y + prnt->H()) prnt->SetScrollY(prnt, prnt->ScrollY + 1);
 		}
 	}
 
