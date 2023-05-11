@@ -1,8 +1,8 @@
 // Lic:
 // src/june19_button.cpp
-// Button - June19
-// version: 21.04.02
-// Copyright (C) 2021 Jeroen P. Broks
+// June 19 - Buttons
+// version: 23.05.11
+// Copyright (C) 2020, 2021, 2023 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.

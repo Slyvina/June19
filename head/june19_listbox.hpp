@@ -1,8 +1,8 @@
 // Lic:
-// src/june19_listbox.hpp
-// Listbox - June19 (header)
-// version: 21.10.11
-// Copyright (C) 2021 Jeroen P. Broks
+// head/june19_listbox.hpp
+// June 19 - Listbox (header)
+// version: 23.05.11
+// Copyright (C) 2020, 2021, 2023 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.

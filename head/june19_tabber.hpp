@@ -1,8 +1,8 @@
 // Lic:
-// src/june19_tabber.hpp
-// June 19
-// version: 20.11.28
-// Copyright (C) 2020 Jeroen P. Broks
+// head/june19_tabber.hpp
+// June 19 - Tabber (header)
+// version: 23.05.11
+// Copyright (C) 2020, 2021, 2023 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
