@@ -1,6 +1,3 @@
-# NOTE!
-
-This is a WIP, do not expect anything to work properly, if it works at all.
 
 # June 19
 
