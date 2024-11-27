@@ -1,7 +1,7 @@
 // License:
 // 	src/june19_core.cpp
 // 	June 19 - Core
-// 	version: 24.11.27
+// 	version: 24.11.27 I
 // 
 // 	Copyright (C) 2020, 2021, 2023, 2024 Jeroen P. Broks
 // 
@@ -722,6 +722,7 @@ namespace Slyvina {
 			auto ret{ AddMenu("-----") };
 			if (!ret) return nullptr; // Crash prevention
 			ret->_type = 2;
+			return ret;
 		}
 
 		int j19pulldown::Type() {
