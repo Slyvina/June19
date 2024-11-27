@@ -1,3 +1,26 @@
+// License:
+// 	head/june19_scrollbar.hpp
+// 	June 19 - Scroll Bar (header)
+// 	version: 24.11.27
+// 
+// 	Copyright (C) 2021, 2023, 2024 Jeroen P. Broks
+// 
+// 	This software is provided 'as-is', without any express or implied
+// 	warranty.  In no event will the authors be held liable for any damages
+// 	arising from the use of this software.
+// 
+// 	Permission is granted to anyone to use this software for any purpose,
+// 	including commercial applications, and to alter it and redistribute it
+// 	freely, subject to the following restrictions:
+// 
+// 	1. The origin of this software must not be misrepresented; you must not
+// 	   claim that you wrote the original software. If you use this software
+// 	   in a product, an acknowledgment in the product documentation would be
+// 	   appreciated but is not required.
+// 	2. Altered source versions must be plainly marked as such, and must not be
+// 	   misrepresented as being the original software.
+// 	3. This notice may not be removed or altered from any source distribution.
+// End License
 // Lic:
 // head/june19_scrollbar.hpp
 // June 19 - Scroll Bar (header)
@@ -29,7 +52,8 @@ namespace Slyvina {
 		/// Gadgets requiring this will call this feature automatically.
 		/// </summary>
 		/// <param name="parent"></param>
+		/// <param name="force">Will force a scroll bar, whether the parent supports it or not! Only do this when you know what you are doing!</param>
 		/// <returns></returns>
-		j19gadget* AttachScrollV(j19gadget* parent);
+		j19gadget* AttachScrollV(j19gadget* parent,bool force=false);
 	}
 }

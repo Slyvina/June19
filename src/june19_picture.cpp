@@ -1,3 +1,26 @@
+// License:
+// 	src/june19_picture.cpp
+// 	June 19 - Picture
+// 	version: 24.11.27
+// 
+// 	Copyright (C) 2020, 2021, 2023, 2024 Jeroen P. Broks
+// 
+// 	This software is provided 'as-is', without any express or implied
+// 	warranty.  In no event will the authors be held liable for any damages
+// 	arising from the use of this software.
+// 
+// 	Permission is granted to anyone to use this software for any purpose,
+// 	including commercial applications, and to alter it and redistribute it
+// 	freely, subject to the following restrictions:
+// 
+// 	1. The origin of this software must not be misrepresented; you must not
+// 	   claim that you wrote the original software. If you use this software
+// 	   in a product, an acknowledgment in the product documentation would be
+// 	   appreciated but is not required.
+// 	2. Altered source versions must be plainly marked as such, and must not be
+// 	   misrepresented as being the original software.
+// 	3. This notice may not be removed or altered from any source distribution.
+// End License
 // Lic:
 // src/june19_picture.cpp
 // June 19 - Picture
@@ -48,7 +71,7 @@ namespace Slyvina {
 			//std::cout << g->IntFlag << std::endl;
 			switch (g->IntFlag) {
 			case Pic_TopLeft:
-				std::cout << "Topleft: (" << g->DrawX() << "," << g->DrawY() << ") Frame: " << g->ImageFrame() << "\n Img: " << img->Width() << "x" << img->Height() << "\t" << std::endl;
+				//std::cout << "Topleft: (" << g->DrawX() << "," << g->DrawY() << ") Frame: " << g->ImageFrame() << "\n Img: " << img->Width() << "x" << img->Height() << "\t" << std::endl;
 				img->Draw(g->DrawX(), g->DrawY(), g->ImageFrame());
 				break;
 			case Pic_TopCenter:
@@ -84,7 +107,7 @@ namespace Slyvina {
 			case Pic_Fit: {
 				double ratw{ (double)img->Width() / g->W() };
 				double rath{ (double)img->Height() / g->H() };
-				if (ratw == 1 && rath == 1) {
+				if (ratw <= 1 && rath <= 1) {
 					img->Draw(g->DrawX(), g->DrawY(), g->ImageFrame());
 				} else if (ratw > 1 && rath <= 1) {
 					double rat{ (double)g->W() / img->Width() };
@@ -98,6 +121,14 @@ namespace Slyvina {
 				} else if (rath < ratw && ratw <= 1) {
 					double rat{ (double)img->Width() / g->W() };
 					img->StretchDraw(g->DrawX(), g->DrawY(), img->Width() * rat, img->Height() * rat);
+				} else if (rath>1 && ratw>1) {
+					if (rath > ratw) {
+						double rat{ (double)g->H() / img->Height() };
+						img->StretchDraw(g->DrawX(), g->DrawY(), img->Width() * rat, img->Height() * rat);
+					} else {
+						double rat{ (double) g->W()/ img->Width() };
+						img->StretchDraw(g->DrawX(), g->DrawY(), img->Width() * rat, img->Height() * rat);
+					}
 				} else {
 					static bool warned{ false };// Only one warning! If more is wrong, well, if this error comes it's likely stuff is bugged anyway (or inconplete, what you like)
 					if (!warned) std::cout << "\7ERROR! Don't know how to fit the image ratios W:" << ratw << "H:" << rath << "   img:" << img->Width() << "x" << img->Height() << "   gadget:" << g->W() << "x" << g->H() << std::endl;

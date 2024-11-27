@@ -1,22 +1,26 @@
-// Lic:
-// src/june19_core.cpp
-// June 19 - Core
-// version: 23.05.11
-// Copyright (C) 2020, 2021, 2023 Jeroen P. Broks
-// This software is provided 'as-is', without any express or implied
-// warranty.  In no event will the authors be held liable for any damages
-// arising from the use of this software.
-// Permission is granted to anyone to use this software for any purpose,
-// including commercial applications, and to alter it and redistribute it
-// freely, subject to the following restrictions:
-// 1. The origin of this software must not be misrepresented; you must not
-// claim that you wrote the original software. If you use this software
-// in a product, an acknowledgment in the product documentation would be
-// appreciated but is not required.
-// 2. Altered source versions must be plainly marked as such, and must not be
-// misrepresented as being the original software.
-// 3. This notice may not be removed or altered from any source distribution.
-// EndLic
+// License:
+// 	src/june19_core.cpp
+// 	June 19 - Core
+// 	version: 24.11.27
+// 
+// 	Copyright (C) 2020, 2021, 2023, 2024 Jeroen P. Broks
+// 
+// 	This software is provided 'as-is', without any express or implied
+// 	warranty.  In no event will the authors be held liable for any damages
+// 	arising from the use of this software.
+// 
+// 	Permission is granted to anyone to use this software for any purpose,
+// 	including commercial applications, and to alter it and redistribute it
+// 	freely, subject to the following restrictions:
+// 
+// 	1. The origin of this software must not be misrepresented; you must not
+// 	   claim that you wrote the original software. If you use this software
+// 	   in a product, an acknowledgment in the product documentation would be
+// 	   appreciated but is not required.
+// 	2. Altered source versions must be plainly marked as such, and must not be
+// 	   misrepresented as being the original software.
+// 	3. This notice may not be removed or altered from any source distribution.
+// End License
 
 #undef DEBUG_PULLDOWNKEY
 
@@ -24,6 +28,7 @@
 #include <TQSE.hpp>
 
 #include <SlyvString.hpp>
+#include <SlyvHSVRGB.hpp>
 
 #include "june19_core.hpp"
 
@@ -64,6 +69,7 @@ namespace Slyvina {
 		static vector <std::shared_ptr<j19pulldown>> _MenuBar{};
 
 		std::string j19gadget::_StatusText{ "" };
+		size_t j19gadget::__count{ 0 };
 
 		static void DrawScreen(j19gadget* self) {} // This just had to exist, that's all!
 		static void DrawWorkScreen(j19gadget* self) {
@@ -100,7 +106,8 @@ namespace Slyvina {
 			// TODO: Status
 		}
 
-		std::map<j19kind, j19draw> j19gadget::HowToDraw;
+		std::map<j19kind, j19draw> j19gadget::HowToDraw{};
+		std::map<j19kind, j19draw> j19gadget::HowToDispose{};
 
 		j19gadget* j19gadget::active{ nullptr };
 		bool j19gadget::defaultfontloaded{ false };
@@ -130,6 +137,16 @@ namespace Slyvina {
 				return false;
 			}
 			HowToDraw[k] = v;
+			return true;
+		}
+
+		bool j19gadget::RegDispose(j19kind k, j19draw v) {
+			_error = "";
+			if (HowToDispose.count(k)) {
+				_error = "Duplicate kind draw registration";
+				return false;
+			}
+			HowToDispose[k] = v;
 			return true;
 		}
 
@@ -300,6 +317,12 @@ namespace Slyvina {
 			fontloaded = true;
 		}
 
+		void j19gadget::SetFont(TImageFont fnt) {
+			KillFont();
+			_Font = fnt;
+			fontloaded = true;
+		}
+
 
 		void j19gadget::SetDefaultFont(std::string FFile) {
 			auto J = JCR6::JCR6_Dir(FFile);
@@ -314,6 +337,12 @@ namespace Slyvina {
 		void j19gadget::SetDefaultFont(JCR6::JT_Dir MFile, std::string FFile) {
 			KillDefaultFont();
 			_DefaultFont = LoadImageFont(MFile, FFile); //_DefaultFont.LoadFont(*MFile, FFile);
+			defaultfontloaded = true;
+		}
+
+		void j19gadget::SetDefaultFont(TImageFont f) {
+			KillDefaultFont();
+			_DefaultFont = f;
 			defaultfontloaded = true;
 		}
 
@@ -422,7 +451,24 @@ namespace Slyvina {
 			BA = Alpha;
 		}
 
-		void j19gadget::Draw(bool force) {
+		void j19gadget::SetForegroundHSV(double hue, double sat, double val) {
+			auto _rgb = hsv2rgb({ hue,sat,val });
+			FR = (byte)floor(_rgb.r * 255);
+			FG = (byte)floor(_rgb.g * 255);
+			FB = (byte)floor(_rgb.b * 255);
+		}
+		void j19gadget::SetBackgroundHSV(double hue, double sat, double val) {
+			auto _rgb = hsv2rgb({ hue,sat,val });
+			BR = (byte)floor(_rgb.r * 255);
+			BG = (byte)floor(_rgb.g * 255);
+			BB = (byte)floor(_rgb.b * 255);
+		}
+
+		j19gadget* j19gadget::ActiveGadget() {
+			return active;
+		}
+
+		void j19gadget::Draw(bool force) {			
 			_error = "";
 			j19chat("Drawing: " << (int)kind << " at (" << X() << "." << DrawX() << " , " << Y() << "." << DrawY() << ") siz: " << W() << "x" << H() << "\tVis:" << Visible << "\tKids:" << kids.size());
 			if (force || Visible) {
@@ -433,7 +479,12 @@ namespace Slyvina {
 				}
 				HowToDraw[kind](this);
 				if (CBDraw) CBDraw(this, j19action::Draw);
-				for (auto kid : kids) kid->Draw(force);
+				for (auto kid : kids) {
+					if (!kid) 
+						std::cout << "Error! Kid does not exist!\n";
+					else
+						kid->Draw(force);
+				}
 			}
 		}
 
@@ -469,6 +520,7 @@ namespace Slyvina {
 				i->KillKid();
 			}
 			Items.clear();
+			_SelectedItem = -1;
 		}
 
 		size_t j19gadget::NumItems() { return Items.size(); }
@@ -625,6 +677,11 @@ namespace Slyvina {
 		j19gadget* j19gadgetitem::Kid() {
 			if (Parent->GetKind() != j19kind::Tabber) return nullptr;
 			return kid;
+		}
+
+		j19gadget::~j19gadget(){
+			if (CBDispose) CBDispose(this, j19action::Dispose);
+			if (HowToDispose.count(kind)) HowToDispose[kind](this);
 		}
 
 		void j19gadgetitem::CreateKid() {

@@ -1,3 +1,26 @@
+// License:
+// 	head/june19_core.hpp
+// 	June 19 - Core (header)
+// 	version: 24.11.27
+// 
+// 	Copyright (C) 2020, 2021, 2023, 2024 Jeroen P. Broks
+// 
+// 	This software is provided 'as-is', without any express or implied
+// 	warranty.  In no event will the authors be held liable for any damages
+// 	arising from the use of this software.
+// 
+// 	Permission is granted to anyone to use this software for any purpose,
+// 	including commercial applications, and to alter it and redistribute it
+// 	freely, subject to the following restrictions:
+// 
+// 	1. The origin of this software must not be misrepresented; you must not
+// 	   claim that you wrote the original software. If you use this software
+// 	   in a product, an acknowledgment in the product documentation would be
+// 	   appreciated but is not required.
+// 	2. Altered source versions must be plainly marked as such, and must not be
+// 	   misrepresented as being the original software.
+// 	3. This notice may not be removed or altered from any source distribution.
+// End License
 // Lic:
 // head/june19_core.hpp
 // June 19 - Core (header)
@@ -54,7 +77,7 @@ namespace Slyvina {
 			// Otherstuff
 			Label,
 			Panel,
-			TextField,
+			//TextField, // Dupe!
 			RadioButton,
 			CheckBox,
 			Picture,
@@ -62,11 +85,12 @@ namespace Slyvina {
 			Tabber,
 			Textfield,
 			Button,
-			VertScrollBar
+			VertScrollBar,
+			HoriScrollBar			
 		};
 
 		enum class j19ctype { Absolute, Percent };
-		enum class j19action { Unknown, Click, Select, DoubleClick, Activate, Draw, Check, UnCheck, Type, Enter, BackSpace, PDMenuAction };
+		enum class j19action { Unknown, Click, Select, DoubleClick, Activate, Draw, Check, UnCheck, Type, Enter, BackSpace, PDMenuAction, Dispose };
 
 
 		class j19gadget;
@@ -105,12 +129,15 @@ namespace Slyvina {
 
 		class j19gadget {
 		private:
+			static size_t __count;
+			size_t __ID{ __count++ };
 			j19gadget* parent{ nullptr };
 			std::vector<j19gadget*> kids;
 			j19kind kind{ j19kind::Unknown };
 			int _x{ 0 }, _y{ 0 }, _w{ 100 }, _h{ 100 };
 			j19ctype tx{ j19ctype::Absolute }, ty{ j19ctype::Absolute }, tw{ j19ctype::Absolute }, th{ j19ctype::Absolute };
 			static std::map<j19kind, j19draw> HowToDraw;
+			static std::map<j19kind, j19draw> HowToDispose;
 			bool fontloaded{ false };
 			TQSG::TImageFont _Font;
 			static bool haspulldown;
@@ -130,10 +157,17 @@ namespace Slyvina {
 			long long _SelectedItem{ -1 };
 
 		public:
+			inline size_t ID() { return __ID; }
+
 			/// <summary>
 			/// This field is normally ingored, but can used to store extra data.
 			/// </summary>
 			std::string HData{ "" };
+
+			/// <summary>
+			/// Some gadgets require special kind of data of any kind. This void pointer is meant for adressing that. Don't touch it unless you know what you are doing!
+			/// </summary>
+			void* bData{ nullptr };
 
 			/// <summary>
 			/// How many kids does this gadget have?
@@ -166,6 +200,7 @@ namespace Slyvina {
 			int IntFlag{ 0 };
 			int ScrollX{ 0 }, ScrollY{ 0 };
 			static bool RegDraw(j19kind k, j19draw v);
+			static bool RegDispose(j19kind k, j19draw v);
 
 			void SetKind(j19kind value); // Please note this only works once, and most creation fuctions take care of this automatically.
 			void SetParent(j19gadget* value); // Please note this only works once, and most creation fuctions take care of this automatically.
@@ -200,10 +235,12 @@ namespace Slyvina {
 			void SetFont(std::string FFile);
 			void SetFont(std::string MFile, std::string FFile);
 			void SetFont(JCR6::JT_Dir MFile, std::string FFile);
+			void SetFont(TQSG::TImageFont fnt);
 
 			static void SetDefaultFont(std::string FFile);
 			static void SetDefaultFont(std::string MFile, std::string FFile);
 			static void SetDefaultFont(JCR6::JT_Dir MFile, std::string FFile);
+			static void SetDefaultFont(TQSG::TImageFont F);
 			static void KillDefaultFont();
 			static TQSG::TImageFont GetDefaultFont();
 
@@ -250,7 +287,10 @@ namespace Slyvina {
 			void SetForeground(j19byte R, j19byte G, j19byte B, j19byte Alpha = 255);
 
 			// Sets the background color of the gadget
-			void SetBackground(j19byte R, j19byte G, j19byte B, j19byte Alpha = 0);
+			void SetBackground(j19byte R, j19byte G, j19byte B, j19byte Alpha = 255);
+
+			void SetForegroundHSV(double hue, double sat, double val);
+			void SetBackgroundHSV(double hue, double sat, double val);
 
 			// Draw a gadget and all its children (if visible)
 			void Draw(bool force = false);
@@ -289,7 +329,14 @@ namespace Slyvina {
 			// If defined this will be called every time a Draw action is requested from this gadget
 			j19callbackfunc CBDraw{ nullptr };
 
+			// If define this will be called when this gadget is being disposed
+			j19callbackfunc CBDispose{ nullptr };
+
 			j19pulldown* AddMenu(std::string Caption);
+
+			static j19gadget* ActiveGadget();
+
+			~j19gadget();
 		};
 
 		class j19pulldown {
