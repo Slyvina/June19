@@ -1,9 +1,9 @@
 // License:
-// 	src/june19_radio.cpp
-// 	June 19 - Radio Buttons
+// 	June19/src/june19_radio.cpp
+// 	June 19 Radio Button
 // 	version: 24.11.27
 // 
-// 	Copyright (C) 2020, 2021, 2023, 2024 Jeroen P. Broks
+// 	Copyright (C) 2024 Jeroen P. Broks
 // 
 // 	This software is provided 'as-is', without any express or implied
 // 	warranty.  In no event will the authors be held liable for any damages

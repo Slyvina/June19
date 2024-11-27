@@ -1,9 +1,9 @@
 // License:
-// 	src/june19_listbox.cpp
+// 	June19/src/june19_listbox.cpp
 // 	June 19 - Listbox
 // 	version: 24.11.27 I
 // 
-// 	Copyright (C) 2020, 2021, 2023, 2024 Jeroen P. Broks
+// 	Copyright (C) 2024 Jeroen P. Broks
 // 
 // 	This software is provided 'as-is', without any express or implied
 // 	warranty.  In no event will the authors be held liable for any damages
