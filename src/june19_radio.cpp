@@ -1,7 +1,7 @@
 // License:
 // 	June19/src/june19_radio.cpp
 // 	June 19 Radio Button
-// 	version: 24.11.27
+// 	version: 24.12.07
 // 
 // 	Copyright (C) 2024 Jeroen P. Broks
 // 
@@ -76,6 +76,7 @@ namespace Slyvina {
 
 					}
 					g->checked = true; // Safety, but should be unneeded (should be and to be are 2 different things)
+					// cout << "\x07 CBAction:" << (int)g->CBAction << " (" << g->Caption << ")\n"; // debug
 					if (g->CBAction) g->CBAction(g, j19action::Check);
 				}
 			}

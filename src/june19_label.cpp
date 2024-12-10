@@ -1,7 +1,7 @@
 // License:
 // 	June19/src/june19_label.cpp
 // 	June 19 Labels
-// 	version: 24.11.27
+// 	version: 24.12.10
 // 
 // 	Copyright (C) 2024 Jeroen P. Broks
 // 
@@ -53,6 +53,24 @@ namespace Slyvina {
 				break;
 			case 2:
 				F->Text(g->Caption, g->DrawX() + floor(g->W() / 2), g->DrawY(), Align::Center);
+				break;
+			case 3:
+				F->Text(g->Caption, g->DrawX(), g->DrawY() + g->H(), Align::Left, Align::Bottom);
+				break;
+			case 4:
+				F->Text(g->Caption, g->DrawX() + g->W(), g->DrawY() + g->H(), Align::Right, Align::Bottom);
+				break;
+			case 5:
+				F->Text(g->Caption, g->DrawX() + floor(g->W() / 2), g->DrawY()+g->H(), Align::Center, Align::Bottom);
+				break;
+			case 6:
+				F->Text(g->Caption, g->DrawX(), g->DrawY() + floor(g->H() / 2), Align::Left, Align::Center);
+				break;
+			case 7:
+				F->Text(g->Caption, g->DrawX(), g->DrawY(), Align::Right, Align::Center);
+				break;
+			case 8:
+				F->Text(g->Caption, g->DrawX()+floor(g->W()/2), g->DrawY()+floor(g->H()/2), Align::Center, Align::Center);
 				break;
 			default:
 				_error = "Unknown label alignment flag: " + std::to_string(g->IntFlag);

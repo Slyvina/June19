@@ -20,7 +20,6 @@
 // 	2. Altered source versions must be plainly marked as such, and must not be
 // 	   misrepresented as being the original software.
 // 	3. This notice may not be removed or altered from any source distribution.
-// End License
 // Lic:
 // head/june19_core.hpp
 // June 19 - Core (header)
@@ -40,6 +39,8 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+// End License
+
 #pragma once
 #include <iostream>
 #include <vector>
@@ -302,6 +303,11 @@ namespace Slyvina {
 
 			// Adds an item to a gadget, please note that if you do this with a gadget that is not item based nothing visual will happen, and you will only waste RAM.
 			void AddItem(std::string ItemText);
+			// Same as AddItem, but it will only add the item if another item with the same text doesn't already exists.
+			void AddUniqueItem(std::string ItemText);
+
+			bool pmunique{ true };
+			inline void operator+=(std::string ItemText) { pmunique ? AddUniqueItem(ItemText) : AddItem(ItemText); }
 
 			// Removes all items from a gadget
 			void ClearItems();
@@ -313,6 +319,8 @@ namespace Slyvina {
 			long long SelectedItem();
 
 			void SelectItem(long long idx);
+
+			void SelectItem(String itemText);
 
 			// Returns item text of an item
 			void ItemText(long long idx, std::string NewText);

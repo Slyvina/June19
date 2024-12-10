@@ -1,7 +1,7 @@
 // License:
 // 	June19/src/june19_core.cpp
 // 	June 19
-// 	version: 24.11.27
+// 	version: 24.12.07
 // 
 // 	Copyright (C) 2024 Jeroen P. Broks
 // 
@@ -291,11 +291,11 @@ namespace Slyvina {
 				if (defaultfontloaded) return _DefaultFont;
 				return nullptr;
 			}
-			return _Font;
+			return _Font; 
 		}
 
 		void j19gadget::KillFont() {
-			cout << "Killing font for gadget " << this << " f:" << &_Font << "\t" << fontloaded << endl;
+			// cout << "Killing font for gadget " << this << " f:" << &_Font << "\t" << fontloaded << endl;
 			//if (fontloaded) _Font.Kill();
 			_Font = nullptr;
 			fontloaded = false;
@@ -513,6 +513,12 @@ namespace Slyvina {
 			auto item{ new j19gadgetitem(this,ItemText) };
 			Items.push_back(item);
 		}
+		void j19gadget::AddUniqueItem(std::string ItemText) {
+			for (auto fitem : Items) {
+				if (fitem->Caption == ItemText) return;
+			}
+			AddItem(ItemText);
+		}
 
 		void j19gadget::ClearItems() {
 			for (auto i : Items) {
@@ -533,6 +539,14 @@ namespace Slyvina {
 		void j19gadget::SelectItem(long long idx) {
 			_SelectedItem = idx;
 			if (_SelectedItem >= Items.size()) _SelectedItem = -1;
+		}
+
+		void j19gadget::SelectItem(String itemText) {
+			_SelectedItem = -1;
+			for (int i = 0;i<Items.size();++i) {
+				auto gi{ Items[i] };
+				if (gi->Caption == itemText) { _SelectedItem = i; return; }
+			}
 		}
 
 		void j19gadget::ItemText(long long idx, std::string NewText) {
