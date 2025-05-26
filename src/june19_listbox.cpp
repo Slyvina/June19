@@ -1,9 +1,9 @@
 // License:
 // 	June19/src/june19_listbox.cpp
 // 	June 19 - Listbox
-// 	version: 24.11.27 I
+// 	version: 25.03.01
 // 
-// 	Copyright (C) 2024 Jeroen P. Broks
+// 	Copyright (C) 2024, 2025 Jeroen P. Broks
 // 
 // 	This software is provided 'as-is', without any express or implied
 // 	warranty.  In no event will the authors be held liable for any damages
@@ -55,6 +55,7 @@ namespace Slyvina {
 			SetColor(g->BR / deler, g->BG / deler, g->BB / deler, g->BA);
 			Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
 			auto fnt = g->Font();
+			//std::cout << "Draw Listbox!! Font\n";
 			int Y = 0;
 			int h = fnt->Height("ABC");
 			if (TQSE::MouseWheelY() != 0 && TQSE::MouseX() > g->DrawX() && TQSE::MouseY() > g->DrawY() && TQSE::MouseX() < g->DrawX() + g->W() && TQSE::MouseY() < g->DrawY() + g->H()) {
@@ -88,7 +89,9 @@ namespace Slyvina {
 			static auto init{ false };
 			auto ret{ new j19gadget() };
 			if (!init) {
+				//std::cout <<"DLB\n";
 				j19gadget::RegDraw(j19kind::ListBox, DrawListBox);
+				init = true;
 			}
 			_error = "";
 			ret->SetKind(j19kind::ListBox);
@@ -100,6 +103,7 @@ namespace Slyvina {
 			ret->SetParent(parent);
 			ret->SetScrollY = SetScroll;
 			if (scroll) AttachScrollV(ret);
+			//std::cout << "CLB - Debug -- SetScrollBar\n";
 			return ret;
 		}
 

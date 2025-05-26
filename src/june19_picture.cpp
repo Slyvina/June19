@@ -1,9 +1,9 @@
 // License:
 // 	June19/src/june19_picture.cpp
 // 	June 19 - Picture
-// 	version: 24.11.27 I
+// 	version: 25.03.01
 // 
-// 	Copyright (C) 2024 Jeroen P. Broks
+// 	Copyright (C) 2024, 2025 Jeroen P. Broks
 // 
 // 	This software is provided 'as-is', without any express or implied
 // 	warranty.  In no event will the authors be held liable for any damages
@@ -21,25 +21,6 @@
 // 	   misrepresented as being the original software.
 // 	3. This notice may not be removed or altered from any source distribution.
 // End License
-// Lic:
-// src/june19_picture.cpp
-// June 19 - Picture
-// version: 23.05.11
-// Copyright (C) 2020, 2021, 2023 Jeroen P. Broks
-// This software is provided 'as-is', without any express or implied
-// warranty.  In no event will the authors be held liable for any damages
-// arising from the use of this software.
-// Permission is granted to anyone to use this software for any purpose,
-// including commercial applications, and to alter it and redistribute it
-// freely, subject to the following restrictions:
-// 1. The origin of this software must not be misrepresented; you must not
-// claim that you wrote the original software. If you use this software
-// in a product, an acknowledgment in the product documentation would be
-// appreciated but is not required.
-// 2. Altered source versions must be plainly marked as such, and must not be
-// misrepresented as being the original software.
-// 3. This notice may not be removed or altered from any source distribution.
-// EndLic
 #include <iostream>
 #include "../head/june19_picture.hpp"
 
@@ -99,6 +80,7 @@ namespace Slyvina {
 				img->Draw(ecx, ecy, g->ImageFrame());
 				break;
 			case Pic_FullStretch:
+				//std::cout << "Stretch: ("<<g->DrawX()<<","<< g->DrawY()<<") -> "<< g->W()<<"x"<< g->H()<<"\n";
 				img->StretchDraw(g->DrawX(), g->DrawY(), g->W(), g->H(), g->ImageFrame());
 				break;
 			case Pic_Tiled:
