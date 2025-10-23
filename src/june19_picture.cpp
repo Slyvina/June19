@@ -1,9 +1,9 @@
 // License:
-// 	June19/src/june19_picture.cpp
+// 	src/june19_picture.cpp
 // 	June 19 - Picture
-// 	version: 25.03.01
+// 	version: 25.10.23
 // 
-// 	Copyright (C) 2024, 2025 Jeroen P. Broks
+// 	Copyright (C) 2020, 2021, 2023, 2024, 2025 Jeroen P. Broks
 // 
 // 	This software is provided 'as-is', without any express or implied
 // 	warranty.  In no event will the authors be held liable for any damages

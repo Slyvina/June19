@@ -1,9 +1,9 @@
 // License:
-// 	June19/src/june19_scrollbar.cpp
-// 	June 19 - Scrollbar
-// 	version: 24.11.27 I
+// 	src/june19_scrollbar.cpp
+// 	June 19 - Scrollbars
+// 	version: 25.10.23
 // 
-// 	Copyright (C) 2024 Jeroen P. Broks
+// 	Copyright (C) 2020, 2021, 2023, 2024, 2025 Jeroen P. Broks
 // 
 // 	This software is provided 'as-is', without any express or implied
 // 	warranty.  In no event will the authors be held liable for any damages

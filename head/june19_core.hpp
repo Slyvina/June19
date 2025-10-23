@@ -1,18 +1,18 @@
 // License:
 // 	head/june19_core.hpp
 // 	June 19 - Core (header)
-// 	version: 24.11.27
-// 
-// 	Copyright (C) 2020, 2021, 2023, 2024 Jeroen P. Broks
-// 
+// 	version: 25.10.23
+//
+// 	Copyright (C) 2020, 2021, 2023, 2024, 2025 Jeroen P. Broks
+//
 // 	This software is provided 'as-is', without any express or implied
 // 	warranty.  In no event will the authors be held liable for any damages
 // 	arising from the use of this software.
-// 
+//
 // 	Permission is granted to anyone to use this software for any purpose,
 // 	including commercial applications, and to alter it and redistribute it
 // 	freely, subject to the following restrictions:
-// 
+//
 // 	1. The origin of this software must not be misrepresented; you must not
 // 	   claim that you wrote the original software. If you use this software
 // 	   in a product, an acknowledgment in the product documentation would be
@@ -20,25 +20,6 @@
 // 	2. Altered source versions must be plainly marked as such, and must not be
 // 	   misrepresented as being the original software.
 // 	3. This notice may not be removed or altered from any source distribution.
-// Lic:
-// head/june19_core.hpp
-// June 19 - Core (header)
-// version: 23.05.11
-// Copyright (C) 2020, 2021, 2023 Jeroen P. Broks
-// This software is provided 'as-is', without any express or implied
-// warranty.  In no event will the authors be held liable for any damages
-// arising from the use of this software.
-// Permission is granted to anyone to use this software for any purpose,
-// including commercial applications, and to alter it and redistribute it
-// freely, subject to the following restrictions:
-// 1. The origin of this software must not be misrepresented; you must not
-// claim that you wrote the original software. If you use this software
-// in a product, an acknowledgment in the product documentation would be
-// appreciated but is not required.
-// 2. Altered source versions must be plainly marked as such, and must not be
-// misrepresented as being the original software.
-// 3. This notice may not be removed or altered from any source distribution.
-// EndLic
 // End License
 
 #pragma once
@@ -87,7 +68,8 @@ namespace Slyvina {
 			Textfield,
 			Button,
 			VertScrollBar,
-			HoriScrollBar			
+			HoriScrollBar,
+			TextArea
 		};
 
 		enum class j19ctype { Absolute, Percent };
@@ -105,6 +87,9 @@ namespace Slyvina {
 		typedef void (*j19callbackfunc)(j19gadget* source, j19action action);
 
 		typedef void(*j19scroll)(j19gadget* s, int scroll);
+
+		typedef long long(*j19xyget)(j19gadget*);
+		typedef void(*j19xyset)(j19gadget*,long long);
 
 		class j19gadgetitem {
 			j19gadget* Parent;
@@ -161,7 +146,7 @@ namespace Slyvina {
 			inline size_t ID() { return __ID; }
 
 			/// <summary>
-			/// This field is normally ingored, but can used to store extra data.
+			/// This field is normally ignored, but can used to store extra data.
 			/// </summary>
 			std::string HData{ "" };
 
@@ -183,6 +168,17 @@ namespace Slyvina {
 			/// <returns></returns>
 			j19gadget* Kid(size_t idx);
 			j19scroll SetScrollY;
+
+			// Cursor for TextArea
+			long long _tax{0},_tay{9};
+			j19xyset _setx{nullptr};
+			j19xyset _sety{nullptr};
+			j19xyget _getx{nullptr};
+			j19xyget _gety{nullptr};
+			inline void TAY(long long v) { if (_sety) _sety(this,v);}
+			inline void TAX(long long v) { if (_setx) _setx(this,v);}
+			inline long long TAY() { return _gety?_gety(this):0;}
+			inline long long TAX() { return _getx?_getx(this):0;}
 
 			bool Active();
 			void Activate();
@@ -374,7 +370,7 @@ namespace Slyvina {
 
 		j19gadget* Screen();
 		j19gadget* WorkScreen();
-		void FreeGadget(j19gadget* gadget); // Disposes a gadget and all its children. 
+		void FreeGadget(j19gadget* gadget); // Disposes a gadget and all its children.
 
 		std::string GetCoreError();
 

@@ -1,9 +1,9 @@
 // License:
-// 	June19/src/june19_textfield.cpp
-// 	June 19 Textfield
-// 	version: 24.11.27
+// 	src/june19_textfield.cpp
+// 	June 19 - Textfield
+// 	version: 25.10.23
 // 
-// 	Copyright (C) 2024 Jeroen P. Broks
+// 	Copyright (C) 2020, 2021, 2023, 2024, 2025 Jeroen P. Broks
 // 
 // 	This software is provided 'as-is', without any express or implied
 // 	warranty.  In no event will the authors be held liable for any damages
@@ -21,25 +21,8 @@
 // 	   misrepresented as being the original software.
 // 	3. This notice may not be removed or altered from any source distribution.
 // End License
-// Lic:
-// src/june19_textfield.cpp
-// June 19 - Textfield
-// version: 23.05.11
-// Copyright (C) 2020, 2021, 2023 Jeroen P. Broks
-// This software is provided 'as-is', without any express or implied
-// warranty.  In no event will the authors be held liable for any damages
-// arising from the use of this software.
-// Permission is granted to anyone to use this software for any purpose,
-// including commercial applications, and to alter it and redistribute it
-// freely, subject to the following restrictions:
-// 1. The origin of this software must not be misrepresented; you must not
-// claim that you wrote the original software. If you use this software
-// in a product, an acknowledgment in the product documentation would be
-// appreciated but is not required.
-// 2. Altered source versions must be plainly marked as such, and must not be
-// misrepresented as being the original software.
-// 3. This notice may not be removed or altered from any source distribution.
-// EndLic
+
+
 #include "june19_textfield.hpp"
 #include <SlyvString.hpp>
 
@@ -51,7 +34,9 @@ namespace Slyvina {
 		using namespace TQSE;
 		using namespace TQSG;
 
+
 		void DrawTextfield(j19gadget* g) {
+			static char altchar{0};
 			auto deler{ 1 }; if (!g->RecEnabled()) deler = 2;
 			auto co{ (SDL_GetTicks() / 500) % 2 };
 			string cur{ " " };
@@ -65,6 +50,24 @@ namespace Slyvina {
 					if (co) cur = "_";
 					auto k{ GetChar() };
 					if (KeyDown(SDLK_LCTRL) || KeyDown(SDLK_RCTRL)) k = 0;
+					if (KeyDown(SDLK_LALT) || KeyDown(SDLK_RALT)) {
+						if (k>32 && k<127 && altchar) {
+							auto txt{ g->Text };
+							txt += '|';
+							txt += altchar;
+							txt += k;
+							//cout << "DEBUG TEXTFIELD TYPE: Received key: " << k << ";\t Text:\"" << txt << "_" << "\";\t TextWidth:" << g->Font()->TextWidth(string(txt + "_").c_str()) << ";\tGadgetWidth:" << (g->W() - 4) << endl;
+							if (g->Font()->Width(string(txt + "_").c_str()) <= g->W() - 4) {
+								g->Text = txt;
+								j19callback(g, Type);
+							}
+							altchar=0;
+						} else if (!altchar) altchar=k;
+						k=0;
+						SetColor(255 - g->FR, 255 - g->FG, 255 - g->FB, g->FA);
+						Rect(g->DrawX(), g->DrawY(), g->W(), g->H(), true);
+						SetColor(g->FR / deler, g->FG / deler, g->FB / deler, g->FA);
+					} else { altchar=0; }
 					switch (k) {
 					case '\b':
 						if (g->Text.size()) {
@@ -97,7 +100,7 @@ namespace Slyvina {
 				if (g->H() < g->FontHeight() + 4) g->H(g->H() + 1);
 				else if (g->H() > g->FontHeight() + 4) g->H(g->H() - 1);
 			}
-			if (MouseHit(1) && MouseX() >= g->DrawX() && MouseY() >= g->DrawY() && MouseX() <= g->DrawX() + g->W() && MouseY() <= g->DrawY() + g->H()) { g->Activate(); }
+			if (MouseHit(1) && MouseX() >= g->DrawX() && MouseY() >= g->DrawY() && MouseX() <= g->DrawX() + g->W() && MouseY() <= g->DrawY() + g->H()) { g->Activate(); altchar=0; }
 		}
 
 		static string _error{ "" };
