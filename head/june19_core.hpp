@@ -1,18 +1,18 @@
 // License:
 // 	head/june19_core.hpp
 // 	June 19 - Core (header)
-// 	version: 25.10.23
-//
+// 	version: 25.10.31
+// 
 // 	Copyright (C) 2020, 2021, 2023, 2024, 2025 Jeroen P. Broks
-//
+// 
 // 	This software is provided 'as-is', without any express or implied
 // 	warranty.  In no event will the authors be held liable for any damages
 // 	arising from the use of this software.
-//
+// 
 // 	Permission is granted to anyone to use this software for any purpose,
 // 	including commercial applications, and to alter it and redistribute it
 // 	freely, subject to the following restrictions:
-//
+// 
 // 	1. The origin of this software must not be misrepresented; you must not
 // 	   claim that you wrote the original software. If you use this software
 // 	   in a product, an acknowledgment in the product documentation would be
@@ -73,7 +73,7 @@ namespace Slyvina {
 		};
 
 		enum class j19ctype { Absolute, Percent };
-		enum class j19action { Unknown, Click, Select, DoubleClick, Activate, Draw, Check, UnCheck, Type, Enter, BackSpace, PDMenuAction, Dispose };
+		enum class j19action { Unknown, Click, Select, DoubleClick, Activate, Draw, Check, UnCheck, Type, Enter, BackSpace, PDMenuAction, Dispose, Up, Down, Left, Right, NewLine,DestroyLine, Home, End };
 
 
 		class j19gadget;
@@ -82,6 +82,9 @@ namespace Slyvina {
 
 
 		typedef void (*j19draw)(j19gadget* g);
+
+		typedef void (*j19setcontent)(j19gadget*g,std::string Content);
+		typedef std::string (*j19getcontent)(j19gadget*g);
 
 		// Used for call back actions
 		typedef void (*j19callbackfunc)(j19gadget* source, j19action action);
@@ -124,6 +127,8 @@ namespace Slyvina {
 			j19ctype tx{ j19ctype::Absolute }, ty{ j19ctype::Absolute }, tw{ j19ctype::Absolute }, th{ j19ctype::Absolute };
 			static std::map<j19kind, j19draw> HowToDraw;
 			static std::map<j19kind, j19draw> HowToDispose;
+			static std::map<j19kind, j19setcontent> HowToSetContent;
+			static std::map<j19kind, j19getcontent> HowToGetContent;
 			bool fontloaded{ false };
 			TQSG::TImageFont _Font;
 			static bool haspulldown;
@@ -170,7 +175,7 @@ namespace Slyvina {
 			j19scroll SetScrollY;
 
 			// Cursor for TextArea
-			long long _tax{0},_tay{9};
+			long long _tax{0},_tay{0};
 			j19xyset _setx{nullptr};
 			j19xyset _sety{nullptr};
 			j19xyget _getx{nullptr};
@@ -198,6 +203,11 @@ namespace Slyvina {
 			int ScrollX{ 0 }, ScrollY{ 0 };
 			static bool RegDraw(j19kind k, j19draw v);
 			static bool RegDispose(j19kind k, j19draw v);
+			static bool RegSetContent(j19kind k,j19setcontent v);
+			static bool RegGetContent(j19kind k,j19getcontent v);
+
+			void Content(String c);
+			std::string Content();
 
 			void SetKind(j19kind value); // Please note this only works once, and most creation fuctions take care of this automatically.
 			void SetParent(j19gadget* value); // Please note this only works once, and most creation fuctions take care of this automatically.

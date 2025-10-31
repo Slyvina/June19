@@ -1,7 +1,7 @@
 // License:
 // 	src/june19_core.cpp
 // 	June 19 - Core
-// 	version: 25.10.23
+// 	version: 25.10.31
 // 
 // 	Copyright (C) 2020, 2021, 2023, 2024, 2025 Jeroen P. Broks
 // 
@@ -108,6 +108,8 @@ namespace Slyvina {
 
 		std::map<j19kind, j19draw> j19gadget::HowToDraw{};
 		std::map<j19kind, j19draw> j19gadget::HowToDispose{};
+		std::map<j19kind, j19getcontent> j19gadget::HowToGetContent{};
+		std::map<j19kind, j19setcontent> j19gadget::HowToSetContent{};
 
 		j19gadget* j19gadget::active{ nullptr };
 		bool j19gadget::defaultfontloaded{ false };
@@ -138,6 +140,35 @@ namespace Slyvina {
 			}
 			HowToDraw[k] = v;
 			return true;
+		}
+		bool j19gadget::RegSetContent(j19kind k,j19setcontent v) {
+			_error = "";
+			if (HowToSetContent.count(k)) {
+				_error = "Duplicate kind SetContent registration";
+				return false;
+			}
+			HowToSetContent[k] = v;
+			return true;
+		}
+		bool j19gadget::RegGetContent(j19kind k,j19getcontent v) {
+			_error = "";
+			if (HowToGetContent.count(k)) {
+				_error = "Duplicate kind GetContent registration";
+				return false;
+			}
+			HowToGetContent[k] = v;
+			return true;
+		}
+
+		void j19gadget::Content(String c) {
+			if (HowToSetContent.count(kind))
+				HowToSetContent[kind](this,c);
+			else
+				Text=c;
+		}
+
+		std::string j19gadget::Content() {
+			return HowToGetContent.count(kind)?HowToGetContent[kind](this):Text;
 		}
 
 		bool j19gadget::RegDispose(j19kind k, j19draw v) {
@@ -291,7 +322,7 @@ namespace Slyvina {
 				if (defaultfontloaded) return _DefaultFont;
 				return nullptr;
 			}
-			return _Font; 
+			return _Font;
 		}
 
 		void j19gadget::KillFont() {
@@ -468,7 +499,7 @@ namespace Slyvina {
 			return active;
 		}
 
-		void j19gadget::Draw(bool force) {			
+		void j19gadget::Draw(bool force) {
 			_error = "";
 			j19chat("Drawing: " << (int)kind << " at (" << X() << "." << DrawX() << " , " << Y() << "." << DrawY() << ") siz: " << W() << "x" << H() << "\tVis:" << Visible << "\tKids:" << kids.size());
 			if (force || Visible) {
@@ -480,7 +511,7 @@ namespace Slyvina {
 				HowToDraw[kind](this);
 				if (CBDraw) CBDraw(this, j19action::Draw);
 				for (auto kid : kids) {
-					if (!kid) 
+					if (!kid)
 						std::cout << "Error! Kid does not exist!\n";
 					else
 						kid->Draw(force);
@@ -707,7 +738,7 @@ namespace Slyvina {
 		void j19gadgetitem::KillKid() {
 			if (kid) {
 				//FreeGadget(kid);
-				//delete kid; kid = nullptr; 
+				//delete kid; kid = nullptr;
 				kid = nullptr;
 			}
 		}

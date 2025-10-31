@@ -22,6 +22,14 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 25.10.23
+// Version: 25.10.31
 // End License
 //
+
+#include "../head/june19_core.hpp"
+
+namespace Slyvina {
+	namespace June19 {
+		j19gadget* CreateTextArea(int _x, int _y, int _width, int _height,j19gadget* _parent,int flags=0);
+	}
+}
