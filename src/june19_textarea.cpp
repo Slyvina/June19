@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 25.10.31
+// Version: 25.11.01
 // End License
 
 #include <TQSG.hpp>
@@ -34,6 +34,7 @@
 
 using namespace Slyvina::TQSG;
 using namespace Slyvina::TQSE;
+using namespace Slyvina::Units;
 
 namespace Slyvina {
 	namespace June19 {
@@ -112,6 +113,20 @@ namespace Slyvina {
 						g->_tax=g->ItemText(g->_tay).size();
 						j19callback(g, End);
 						break;
+					default: {
+						if (Chr>=32 && Chr<=126) {
+							auto t{g->ItemText(g->_tay)};
+							if (g->_tax==0) {
+								t=Units::TrSPrintF("%c",Chr)+t;
+								g->_tax++;
+							} else if (g->_tax==t.size()) {
+								t+=Chr;
+								g->_tax++;
+							} else
+								t=t.substr(0,g->_tax)+Units::TrSPrintF("%c",Chr)+t.substr(++g->_tax);
+							g->ItemText(g->_tay,t);
+						}
+						} break;
 				}
 			}
 			if (MouseHit(1) && MouseX() >= g->DrawX() && MouseY() >= g->DrawY() && MouseX() <= g->DrawX() + g->W() && MouseY() <= g->DrawY() + g->H()) { g->Activate(); altchar=0; }
