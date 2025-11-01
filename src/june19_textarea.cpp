@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 25.11.01
+// Version: 25.11.01 I
 // End License
 
 #include <TQSG.hpp>
@@ -123,7 +123,7 @@ namespace Slyvina {
 								t+=Chr;
 								g->_tax++;
 							} else
-								t=t.substr(0,g->_tax)+Units::TrSPrintF("%c",Chr)+t.substr(++g->_tax);
+								t=t.substr(0,g->_tax++)+Units::TrSPrintF("%c",Chr)+t.substr(g->_tax);
 							g->ItemText(g->_tay,t);
 						}
 						} break;
