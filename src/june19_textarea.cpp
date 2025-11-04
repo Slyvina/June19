@@ -22,7 +22,7 @@
 // 	Please note that some references to data like pictures or audio, do not automatically
 // 	fall under this licenses. Mostly this is noted in the respective files.
 // 
-// Version: 25.11.01 I
+// Version: 25.11.04
 // End License
 
 #include <TQSG.hpp>
@@ -57,27 +57,31 @@ namespace Slyvina {
 				Rect(g->DrawX(),g->DrawY(),g->W(),g->H(),true);
 				SetColor(g->FR/deler,g->FG/deler,g->FB/deler,g->FA);
 			}
-			int lny=0;
-			int th=0;
+			int lny{0};
+			int th{0};
+			bool seenx{false},seeny{false};
 			for(size_t ln=g->ScrollY; lny+th<g->H() && ln<g->NumItems();ln++) {
 				//printf("%03d:%03d> lny:%04d\n",ln,g->NumItems(),lny);
 				int lnc{g->ScrollX},lnx{0};
 				auto lt{g->ItemText(ln)};
 				for(size_t cn=g->ScrollX;cn<=lt.size() && lnx<g->W();cn++) {
 					std::string ch{cn<lt.size()?Units::Mid(lt,cn+1,1):" "};
+					seenx=seenx||cn==g->_tax;
+					seeny=seeny||ln==g->_tay;
 					if (cn==g->_tax && ln==g->_tay) {
 						SetColor(g->FR/deler,g->FG/deler,g->FB/deler,255);
 						Rect(lnx+g->DrawX(),lny+g->DrawY(),g->Font()->Width(ch),g->Font()->Height(ch==" "?"THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG":ch),!g->Active());
 						if (g->Active()) SetColor(g->BR,g->BG,g->BB);
+
 					} else SetColor(g->FR/deler,g->FG/deler,g->FB/deler,g->FA);
 					//printf("(%03d,%03d)[%02d,%02d]: \"%s\" <- \"%s\"\n",lnx,lny,cn,ln,ch.c_str(),lt.c_str());
 					g->Font()->Text(ch,lnx+g->DrawX(),lny+g->DrawY());
 					lnx+=g->Font()->Width(ch);
 				}
-				lny+=g->Font()->Height(lt);
+				lny+=g->Font()->Height(Trim(lt).size()?lt:"THE QUICK BROWN FIX JUMPS OVER THE LAZY DOG!");
 			}
 			if (g->Active() && g->RecEnabled()) {
-				g->Font()->Dark(Units::TrSPrintF("TextArea: %03d:%03d(%03d:%03d)",g->_tax,g->_tay,g->NumItems(),g->ItemText(g->_tay).size()),5,5);
+				//g->Font()->Dark(Units::TrSPrintF("TextArea: %03d:%03d(%03d:%03d)",g->_tax,g->_tay,g->NumItems(),g->ItemText(g->_tay).size()),5,5);
 				if (!g->NumItems()) g->AddItem("");
 				switch(Key) {
 					case SDLK_UP:
@@ -113,6 +117,24 @@ namespace Slyvina {
 						g->_tax=g->ItemText(g->_tay).size();
 						j19callback(g, End);
 						break;
+					case SDLK_RETURN:
+					case SDLK_RETURN2:
+						if (g->_tax==g->ItemText(g->_tay).size()) {
+							g->InsertItem((size_t)++g->_tay,"");
+							g->_tax=0;
+						} else if (g->_tax==0) {
+							g->InsertItem((size_t)g->_tay++,"");
+							g->_tax=0;
+						} else {
+							auto
+								ft{g->ItemText(g->_tay)},
+								t1{ft.substr(0,g->_tax)},
+								t2{ft.substr(g->_tax)};
+							//std::cout << '"' <<t1 << '"' << " -> " << '"' <<t2<<"\"\n";
+							g->ItemText(g->_tay++,t1);
+							g->InsertItem(g->_tay,t2);
+							g->_tax=0;
+						}
 					default: {
 						if (Chr>=32 && Chr<=126) {
 							auto t{g->ItemText(g->_tay)};
@@ -130,6 +152,7 @@ namespace Slyvina {
 				}
 			}
 			if (MouseHit(1) && MouseX() >= g->DrawX() && MouseY() >= g->DrawY() && MouseX() <= g->DrawX() + g->W() && MouseY() <= g->DrawY() + g->H()) { g->Activate(); altchar=0; }
+			if (g->ScrollX>g->_tax) g->ScrollX--; else if (!seenx) g->ScrollX++;
 		}
 
 		static void SetContent(j19gadget*g,std::string Text) {

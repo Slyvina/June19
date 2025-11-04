@@ -1,7 +1,7 @@
 // License:
 // 	src/june19_core.cpp
 // 	June 19 - Core
-// 	version: 25.10.31
+// 	version: 25.11.04
 // 
 // 	Copyright (C) 2020, 2021, 2023, 2024, 2025 Jeroen P. Broks
 // 
@@ -549,6 +549,14 @@ namespace Slyvina {
 				if (fitem->Caption == ItemText) return;
 			}
 			AddItem(ItemText);
+		}
+
+		void j19gadget::InsertItem(size_t idx,std::string ItemText,bool FromBack) {
+			_error="";
+			if (idx==Items.size()) { AddItem(ItemText); return; }
+			if (idx>Items.size()) { _error = "Insert index out of bounds!"; return; }
+			auto item{ new j19gadgetitem(this,ItemText) };
+			Items.insert( FromBack?Items.end()-idx:Items.begin()+idx,item);
 		}
 
 		void j19gadget::ClearItems() {

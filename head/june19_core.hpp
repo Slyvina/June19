@@ -1,7 +1,7 @@
 // License:
 // 	head/june19_core.hpp
 // 	June 19 - Core (header)
-// 	version: 25.10.31
+// 	version: 25.11.04
 // 
 // 	Copyright (C) 2020, 2021, 2023, 2024, 2025 Jeroen P. Broks
 // 
@@ -311,6 +311,8 @@ namespace Slyvina {
 			void AddItem(std::string ItemText);
 			// Same as AddItem, but it will only add the item if another item with the same text doesn't already exists.
 			void AddUniqueItem(std::string ItemText);
+
+			void InsertItem(size_t idx,std::string ItemText,bool fromend=false);
 
 			bool pmunique{ true };
 			inline void operator+=(std::string ItemText) { pmunique ? AddUniqueItem(ItemText) : AddItem(ItemText); }
